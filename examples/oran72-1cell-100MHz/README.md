@@ -6,6 +6,7 @@ A matching pair of configs for one n78 100 MHz cell (30 kHz, TDD 7D-S-2U, 1T1R) 
 |---|---|
 | `gnb-ocudu-1cell-100MHz-1x1.yml` | OCUDU gNB (O-DU) |
 | `ue-1cell-100MHz-1x1.cfg` | Simnovus UE simulator |
+| `simnovator-testcase-1cell-100MHz-1x1.json` | Simnovator test case (Test Cases → Import), same settings as the `.cfg` |
 | `open5gs/` | 5G core (Open5GS): AMF, SMF, UPF and NRF configs, see [open5gs/README.md](open5gs/README.md) |
 
 Validated on 2026-10-26: UE simulator in a VM (12 vCPUs, one SR-IOV VF) against OCUDU, 433 Mb/s DL and 118 Mb/s UL, BLER 0%.
@@ -38,7 +39,19 @@ Then replace every `<...>` placeholder in both files (marked CHANGE).
 
 ## Using it with Simnovator
 
-In the test case (UE simulation), set Radio Type **O-RAN 7.2** with the same values: Bind Interface = the VF interface, Destination MAC = `du_mac_addr`, eAxC DL 0 / UL 0 / PRACH 4, compression BFP 9, MTU 9000, TAI offset 37, lteue cores 1-11, DL 2-3, UL 4.
+Import `simnovator-testcase-1cell-100MHz-1x1.json` (Test Cases → Import). It creates the test case `ORAN72-1CELL-100M-1X1-UDP`: Radio Type O-RAN 7.2, the same cell and fronthaul values as the `.cfg`, 1 UE, UDP 450 Mb/s DL and 120 Mb/s UL for 150 s.
+
+Before running it, edit:
+
+| Step | Field | Set to |
+|---|---|---|
+| Cell (Advanced) | Bind Interface | the VF interface in the VM (`enp7s0` in the file) |
+| Cell (Advanced) | Destination MAC | the gNB's `du_mac_addr` (`00:00:00:00:00:00` in the file) |
+| Cell (Advanced) | lteue / DL / UL cores | 1-11 / 2-3 / 4 for a 12-vCPU VM; keep within your VM's CPUs |
+| Subscribers | K and OPc | your SIM's (the file has the public test values `465B5CE8…` / `E8ED289D…`, which also work if you add them to Open5GS) |
+| User plane | Server IP | your Simnovator app server (`192.0.2.10` in the file) |
+
+The subscriber is IMSI 001010000000001.
 
 ## Run by hand (without Simnovator)
 

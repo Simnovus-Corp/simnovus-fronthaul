@@ -1,0 +1,209 @@
+{
+  "test_case_details": [
+    {
+      "Test_Name": "ORAN72-1CELL-100M-1X1-UDP",
+      "Test_Description": "O-RAN 7.2, 1 cell n78 100 MHz 1T1R against the OCUDU example config. 1 UE, UDP 450 DL / 120 UL Mb/s for 150 s. Before running: set Bind Interface (VF interface), Destination MAC (O-DU fronthaul MAC), the subscriber K/OPc and the app server IP. Validated 2026-10-26: 433/118 Mb/s.",
+      "State": "Active",
+      "Type": "UE",
+      "Test_Config_Intermediate_Object": {
+        "settings": {
+          "test_name": "ORAN72-1CELL-100M-1X1-UDP",
+          "description": "O-RAN 7.2, 1 cell n78 100 MHz 1T1R against the OCUDU example config. 1 UE, UDP 450 DL / 120 UL Mb/s for 150 s. Before running: set Bind Interface (VF interface), Destination MAC (O-DU fronthaul MAC), the subscriber K/OPc and the app server IP. Validated 2026-10-26: 433/118 Mb/s.",
+          "loggingProfileName": "error",
+          "successCriteriaName": "BLER Success"
+        },
+        "cellConfig": {
+          "cells": [
+            {
+              "NTN": false,
+              "s72": {
+                "cpDl": "auto",
+                "rtcId": 0,
+                "ta3MaxUl": 700,
+                "ta3MinUl": 50,
+                "taiOffset": 37,
+                "t2aMaxUpDl": 400,
+                "bindInterface": "enp7s0",
+                "cpuCoreListDl": "2-3",
+                "cpuCoreListUl": "4",
+                "lteueCpuCores": "1-11"
+              },
+              "scs": 30,
+              "band": "n78",
+              "prach": 0,
+              "NRARFCN": {
+                "dl": 650000,
+                "ssb": 647328
+              },
+              "antennas": {
+                "dl": 1,
+                "ul": 1
+              },
+              "cellType": "5g",
+              "productP": "UE-SIM",
+              "ratTypeP": "sa",
+              "bandwidth": "100",
+              "oruConfig": {
+                "ru": [
+                  {
+                    "mtuSize": 9000,
+                    "eAxCIDConfig": {
+                      "ccIdBits": 4,
+                      "dlEAxCIDs": {
+                        "sectionType1": [
+                          0
+                        ]
+                      },
+                      "ulEAxCIDs": {
+                        "sectionType1": [
+                          0
+                        ],
+                        "sectionType3": [
+                          4
+                        ]
+                      },
+                      "duPortIdBits": 4,
+                      "ruPortIdBits": 4,
+                      "bandSectorIdBits": 4
+                    },
+                    "compressionConfig": {
+                      "staticIqBitWidth": 9,
+                      "staticCompressionMethod": "BFP_COMPRESSION"
+                    }
+                  }
+                ],
+                "destinationMac": "00:00:00:00:00:00"
+              },
+              "duplexMode": "TDD",
+              "radioModeP": "s72",
+              "channelSimP": false,
+              "carrierAggregationP": false,
+              "asymmetricApplicable": false
+            }
+          ],
+          "master": {
+            "product": "UE-SIM",
+            "ratType": "sa",
+            "radioMode": "s72",
+            "channelSim": false,
+            "ldpcIteration": 5,
+            "pdcchDecodeOpt": false,
+            "carrierAggregation": false
+          }
+        },
+        "subsConfig": {
+          "subs": [
+            {
+              "ri": "auto",
+              "cqi": "auto",
+              "opc": "E8ED289DEBA952E4283B54E88E6183CA",
+              "pmi": "auto",
+              "NTNP": false,
+              "imeisv": "3534490000000101",
+              "pdnType": "ipv4",
+              "ueCount": 1,
+              "cellsLen": 1,
+              "nextSUPI": 1,
+              "ratTypeP": "sa",
+              "algorithm": "milenage",
+              "asRelease": 15,
+              "cellTypeP": "5g",
+              "mncDigits": 2,
+              "resLength": 8,
+              "sharedKey": "465B5CE8B199B49FAA5F0A2EE238A6BC",
+              "attachType": "normal",
+              "ueCategory": "nr",
+              "VoNRSupport": false,
+              "channelSimP": false,
+              "duplexModeP": "TDD",
+              "publicKeyId": 0,
+              "servingCell": 0,
+              "external_sim": false,
+              "powerControl": false,
+              "startingSUPI": 1010000000001,
+              "preambleIndex": 0,
+              "preferredPLMN": [
+                "001-01"
+              ],
+              "networkSlicing": "disable",
+              "ueCategoryType": "combined",
+              "cipherAlgorithm": [
+                "nea0",
+                "nea1",
+                "nea2"
+              ],
+              "securityContext": true,
+              "algorithmKeyMode": "opc",
+              "protectionScheme": "null",
+              "routingIndicator": 1111,
+              "BLEROverrideValue": 0,
+              "ueInitiatedEvents": "none",
+              "incrementSharedKey": 0,
+              "integrityAlgorithm": [
+                "nia0",
+                "nia1",
+                "nia2"
+              ],
+              "carrierAggregationP": false,
+              "rrc_inactive_support": false,
+              "uac_access_identities": [],
+              "access_control_classes": []
+            }
+          ]
+        },
+        "userPlaneConfig": {
+          "profiles": [
+            {
+              "mtuSize": 1500,
+              "pdnType": "ipv4",
+              "subsLen": 1,
+              "dataLoop": false,
+              "dataType": "iperf",
+              "ratTypeP": "sa",
+              "portRange": 5000,
+              "startDelay": 15,
+              "dataBitrate": {
+                "dl": {
+                  "unit": "mbps",
+                  "value": 450
+                },
+                "ul": {
+                  "unit": "mbps",
+                  "value": 120
+                }
+              },
+              "pdnTypeNonIp": false,
+              "attachTypeSIP": true,
+              "dataDirection": "both",
+              "payloadLength": 1372,
+              "networkSlicingP": false,
+              "serverIpAddress": "192.0.2.10",
+              "sessionDuration": 150,
+              "subscriberGroup": [
+                -1
+              ],
+              "transportProtocol": "udp"
+            }
+          ]
+        },
+        "powerCycleConfig": {
+          "profiles": [
+            {
+              "subsLen": 1,
+              "durationP": 180,
+              "attachRate": 1,
+              "attachType": "bursty",
+              "attachDelay": 0,
+              "loopProfile": "disable",
+              "powerOnTime": 200,
+              "attachRateMode": "attachRate",
+              "subscriberGroup": [
+                -1
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

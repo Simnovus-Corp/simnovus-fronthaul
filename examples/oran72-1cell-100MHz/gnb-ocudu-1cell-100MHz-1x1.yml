@@ -1,0 +1,102 @@
+# OCUDU gNB: 1 cell, n78, 100 MHz, 30 kHz, 1T1R, O-RAN 7.2 (split 7.2x) facing the Simnovus UE simulator.
+# Validated 2026-10-26 against the Simnovus UE simulator in a VM: 433 Mb/s DL / 118 Mb/s UL, BLER 0%.
+#
+# Change every value marked CHANGE (the <...> placeholders will not start until replaced).
+# Values marked MATCH must be the same on the UE simulator (see README).
+cu_cp:
+  amf:
+    addrs: <AMF_N2_IP>                # CHANGE: your core's AMF (N2) address
+    port: 38412
+    bind_addrs: <GNB_N2_IP>           # CHANGE: this host's address towards the AMF
+    supported_tracking_areas:
+      - tac: 1                        # MATCH core
+        plmn_list:
+          - plmn: "00101"             # MATCH core and UE SIMs
+            tai_slice_support_list:
+              - sst: 1
+cu_up:
+  ngu:
+    socket:
+      - bind_addr: <GNB_N3_IP>        # CHANGE: this host's address towards the UPF (N3)
+cell_cfg:
+  dl_arfcn: 650000                    # MATCH UE: 3750 MHz
+  band: 78                            # MATCH UE
+  channel_bandwidth_MHz: 100          # MATCH UE
+  common_scs: 30                      # MATCH UE
+  plmn: "00101"
+  tac: 1
+  pci: 1
+  nof_antennas_dl: 1                  # MATCH UE n_antenna_dl
+  nof_antennas_ul: 1                  # MATCH UE n_antenna_ul
+  tdd_ul_dl_cfg:                      # 7D S 2U, S = 6 DL + 4 UL symbols
+    dl_ul_tx_period: 10
+    nof_dl_slots: 7
+    nof_dl_symbols: 6
+    nof_ul_slots: 2
+    nof_ul_symbols: 4
+  pdsch:
+    mcs_table: qam256
+    dmrs_additional_position: 0
+  pusch:
+    dmrs_additional_position: 0
+  pucch:
+    f2_max_nof_rbs: 4
+log:
+  filename: /tmp/gnb.log
+  all_level: warning
+metrics:
+  enable_log: true
+  layers:
+    enable_ru: true
+    enable_sched: true
+    enable_mac: true
+  periodicity:
+    du_report_period: 1000
+expert_phy:
+  max_proc_delay: 5
+  max_request_headroom_slots: 3
+ru_ofh:
+  compr_method_ul: bfp                # MATCH UE ud_comp_hdr 0x91 (BFP, 9 bits)
+  compr_bitwidth_ul: 9
+  compr_method_dl: bfp
+  compr_bitwidth_dl: 9
+  compr_method_prach: bfp
+  compr_bitwidth_prach: 9
+  enable_ul_static_compr_hdr: true
+  enable_dl_static_compr_hdr: true
+  is_prach_cp_enabled: true
+  iq_scaling: 14.4
+  t1a_min_up: 245
+  t1a_max_up: 345
+  t1a_min_cp_dl: 370
+  t1a_max_cp_dl: 470
+  t1a_min_cp_ul: 370
+  t1a_max_cp_ul: 470
+  ta4_min: 85
+  ta4_max: 1100
+  cells:
+    - network_interface: <DU_FH_NIC>        # CHANGE: fronthaul port (kernel name, or PCI address with DPDK)
+      du_mac_addr: <DU_FH_MAC>              # CHANGE: that port's MAC. MATCH UE remote_addr
+      ru_mac_addr: <UESIM_VF_MAC>           # CHANGE: the UE simulator VF MAC (printed by simnovus-fronthaul)
+      vlan_tag_cp: <VLAN>                   # CHANGE: fronthaul VLAN. MATCH the VLAN set on the UE simulator VF
+      vlan_tag_up: <VLAN>
+      mtu: 9000
+      dl_port_id: [0]                       # MATCH UE rtc_id 0
+      ul_port_id: [0]
+      prach_port_id: [4]                    # MATCH UE port_mapping_prach [4]
+expert_execution:
+  affinities:                               # CHANGE: isolated cores on your DU host
+    main_pool_cpus: 3-13
+    main_pool_pinning: round-robin
+    ofh:
+      timing_cpu: "1"
+      txrx_cpus: ["2"]
+  threads:
+    upper_phy:
+      pdsch_cb_batch_length: 1
+      max_pdsch_concurrency: 4
+      max_pusch_and_srs_concurrency: 12
+    main_pool:
+      nof_threads: 8
+    ofh:
+      enable_busy_waiting: false

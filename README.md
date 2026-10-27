@@ -37,6 +37,10 @@ No input: it finds the VF(s) the host set up, sets MTU 9000, larger rings and no
 
 Undo: `--remove` (host: `--if <port> --remove`).
 
+## Example configs
+
+[`examples/oran72-1cell-100MHz`](examples/oran72-1cell-100MHz): a matching OCUDU gNB config and UE simulator config for one n78 100 MHz cell over O-RAN 7.2, with a table of the values that must match on both sides.
+
 ## Requirements
 
 - Linux with systemd; Ubuntu 22.04/24.04 tested.

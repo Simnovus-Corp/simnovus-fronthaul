@@ -6,6 +6,7 @@ A matching pair of configs for one n78 100 MHz cell (30 kHz, TDD 7D-S-2U, 1T1R) 
 |---|---|
 | `gnb-ocudu-1cell-100MHz-1x1.yml` | OCUDU gNB (O-DU) |
 | `ue-1cell-100MHz-1x1.cfg` | Simnovus UE simulator |
+| `open5gs/` | 5G core (Open5GS): AMF, SMF, UPF and NRF configs, see [open5gs/README.md](open5gs/README.md) |
 
 Validated on 2026-10-26: UE simulator in a VM (12 vCPUs, one SR-IOV VF) against OCUDU, 433 Mb/s DL and 118 Mb/s UL, BLER 0%.
 
@@ -17,7 +18,7 @@ Validated on 2026-10-26: UE simulator in a VM (12 vCPUs, one SR-IOV VF) against 
    `curl -fsSL https://github.com/Simnovus-Corp/simnovus-fronthaul/releases/latest/download/simnovus-fronthaul.sh | sudo bash -s -- --if <fronthaul port> --vlan <VLAN> --vm <VM name>`
    then inside the VM, with no options:
    `curl -fsSL https://github.com/Simnovus-Corp/simnovus-fronthaul/releases/latest/download/simnovus-fronthaul.sh | sudo bash`
-3. **Core:** provision the UE's IMSI, K and OPc (PLMN 00101, DNN `internet`).
+3. **Core:** set up Open5GS with the files in `open5gs/` and add the UE's IMSI, K and OPc (PLMN 00101, DNN `internet`). With the core on the gNB host, the gNB's AMF address is 127.0.0.5 and its N2/N3 bind addresses are 127.0.0.1.
 
 Then replace every `<...>` placeholder in both files (marked CHANGE).
 

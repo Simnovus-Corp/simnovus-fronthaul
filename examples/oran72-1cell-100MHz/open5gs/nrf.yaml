@@ -1,0 +1,16 @@
+# Open5GS NRF for the 1-cell example.
+logger:
+  file:
+    path: /var/log/open5gs/nrf.log
+global:
+  max:
+    ue: 1024
+nrf:
+  serving:
+    - plmn_id:
+        mcc: "001"                  # MATCH amf.yaml
+        mnc: "01"
+  sbi:
+    server:
+      - address: 127.0.0.10
+        port: 7777

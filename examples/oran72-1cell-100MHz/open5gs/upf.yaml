@@ -1,0 +1,23 @@
+# Open5GS UPF for the 1-cell example.
+# Same host as the gNB: keep 127.0.0.7. Core on another machine: set the gtpu address to that machine's N3 IP.
+logger:
+  file:
+    path: /var/log/open5gs/upf.log
+global:
+  max:
+    ue: 1024
+upf:
+  pfcp:
+    server:
+      - address: 127.0.0.7
+    client:
+  gtpu:
+    server:
+      - address: 127.0.0.7          # CHANGE if the gNB is on another machine
+  session:
+    - subnet: 10.45.0.0/16
+      gateway: 10.45.0.1
+  metrics:
+    server:
+      - address: 127.0.0.7
+        port: 9090

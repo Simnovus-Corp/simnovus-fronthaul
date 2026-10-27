@@ -11,6 +11,12 @@ A matching pair of configs for one n78 100 MHz cell (30 kHz, TDD 7D-S-2U, 1T1R) 
 
 Validated on 2026-10-26: UE simulator in a VM (12 vCPUs, one SR-IOV VF) against OCUDU, 433 Mb/s DL and 118 Mb/s UL, BLER 0%.
 
+## OCUDU build needed at 100 MHz
+
+At 100 MHz the cell has 273 PRBs. Stock OCUDU sends the uplink C-plane section for the whole band as `numPrbc=0` ("all PRBs"). The UE simulator answers DL fine but sends no uplink U-plane for it, so PRACH works and the attach **fails at Msg3**.
+
+Build OCUDU with the uplink section split: in `lib/ofh/serdes/ofh_cplane_message_builder_impl.cpp` (`build_dl_ul_radio_channel_message`), write an uplink section wider than 255 PRBs as two sections (255 PRBs, then the rest) with explicit `startPrbc`/`numPrbc`. At 80–100 MHz also raise the OFH receive buffer pool (`ETH_BUFFER_POOL_SIZE` in `lib/ofh/ethernet/ethernet_rx_buffer_pool.h`, 4096000 to 65536000). Without a rebuild, 90 MHz (245 PRBs) avoids the issue: set `channel_bandwidth_MHz: 90` on the gNB and `bandwidth: 90` on the UE simulator, with `ssb_nr_arfcn` set to the `dl_ssb_arfcn` the gNB prints at start-up.
+
 ## Before you start
 
 1. **PTP** on the host and in the VM:

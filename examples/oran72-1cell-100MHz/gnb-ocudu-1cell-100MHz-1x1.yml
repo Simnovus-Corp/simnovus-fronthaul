@@ -1,6 +1,10 @@
 # OCUDU gNB: 1 cell, n78, 100 MHz, 30 kHz, 1T1R, O-RAN 7.2 (split 7.2x) facing the Simnovus UE simulator.
 # Validated 2026-10-26 against the Simnovus UE simulator in a VM: 433 Mb/s DL / 118 Mb/s UL, BLER 0%.
 #
+# OCUDU build: at 100 MHz (273 PRB) stock OCUDU sends the uplink C-plane section as numPrbc=0 ("all PRBs") and the UE
+# simulator then sends no PUSCH, so attach fails at Msg3. Build OCUDU with the uplink section split (two sections,
+# 255 + 18 PRB; see README), or use 90 MHz, which stays under 255 PRB.
+#
 # Change every value marked CHANGE (the <...> placeholders will not start until replaced).
 # Values marked MATCH must be the same on the UE simulator (see README).
 cu_cp:

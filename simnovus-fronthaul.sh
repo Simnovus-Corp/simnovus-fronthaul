@@ -9,7 +9,7 @@
 #
 # Run with --help for all options.
 set -euo pipefail
-VERSION=0.1.0
+VERSION=0.1.1
 MAC_PREFIX=02:53:4e            # locally administered; "SN"
 CONF_DIR=/etc/simnovus
 APPLY=/usr/local/sbin/simnovus-fronthaul-apply
@@ -175,6 +175,7 @@ remove_instance() {   # $1 = instance name
     rm -f "$conf"
     if ! ls "$CONF_DIR"/fronthaul-*.conf >/dev/null 2>&1; then
         rm -f "$APPLY" "$UNIT_DIR/simnovus-fronthaul@.service"
+        rmdir "$CONF_DIR" 2>/dev/null || true
     fi
     systemctl daemon-reload
     ok "removed fronthaul setup $inst"
@@ -185,7 +186,12 @@ echo "Simnovus fronthaul setup $VERSION"
 # ---------------------------------------------------------------- guest / interface mode
 VIRT=$(systemd-detect-virt 2>/dev/null || true)
 if [ -z "$VLANS" ]; then
-    if [ $REMOVE = 1 ]; then remove_instance guest; exit 0; fi
+    if [ $REMOVE = 1 ]; then
+        # host undo is "--if <port> --remove"; inside the VM it's just "--remove"
+        if [ -n "$IFS_ARG" ] && [ -e "$CONF_DIR/fronthaul-$IFS_ARG.conf" ]; then remove_instance "$IFS_ARG"
+        else remove_instance guest; fi
+        exit 0
+    fi
     if [ -n "$IFS_ARG" ]; then
         NICS=$(echo "$IFS_ARG" | tr ',' ' ')
         for n in $NICS; do [ -e "/sys/class/net/$n" ] || die "no interface $n"; done

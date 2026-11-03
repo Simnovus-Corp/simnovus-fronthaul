@@ -11,18 +11,24 @@ A matching pair of configs for one n78 100 MHz cell (30 kHz, TDD 7D-S-2U, 1T1R) 
 
 Validated on 2026-10-26: UE simulator in a VM (12 vCPUs, one SR-IOV VF) against OCUDU, 433 Mb/s DL and 118 Mb/s UL, BLER 0%.
 
-## OCUDU build needed at 100 MHz
+## 100 MHz with a stock OCUDU build
 
-At 100 MHz the cell has 273 PRBs. Stock OCUDU sends the uplink C-plane section for the whole band as `numPrbc=0` ("all PRBs"). The UE simulator answers DL fine but sends no uplink U-plane for it, so PRACH works and the attach **fails at Msg3**.
+At 100 MHz the cell has 273 PRBs, more than one O-RAN section can count (255). Stock OCUDU then sends each full-carrier section as `numPrbc=0` ("all PRBs").
 
-Apply [`ocudu-patch/ocudu-100mhz-ul-section-split.patch`](ocudu-patch/ocudu-100mhz-ul-section-split.patch) and rebuild OCUDU:
+**What to set:** `gen_prb0: true` in the cell's `s72` block of the UE simulator config. It is already set in `ue-1cell-100MHz-1x1.cfg`.
+- With it, the UE simulator works with full-carrier sections as `numPrbc=0`, in both directions.
+- Without it, the UE simulator finds the cell and sends PRACH, but no uplink data. The gNB never receives Msg3, so the attach stops at "contention resolution failed".
+- Checked on 2026-11-03 against a stock OCUDU build at 100 MHz 1x1: without it the attach stopped at Msg3; with it the UE registered, got an IP address and pinged the core with no loss.
+
+**Optional OCUDU patch:** [`ocudu-patch/ocudu-100mhz-ul-section-split.patch`](ocudu-patch/ocudu-100mhz-ul-section-split.patch). You no longer need it for the attach.
+- It sends uplink sections wider than 255 PRBs as two explicit sections. That is useful when the UE simulator side cannot set `gen_prb0`.
+- It also raises OCUDU's fronthaul receive buffer pool from 4 MB to 64 MB, which helped sustained 80–100 MHz uplink in our tests.
+- It applies to OCUDU `release_26_04`, `release_26_10` and `dev` (2026-10-27).
 
 ```
 cd <OCUDU source tree>
 git apply ocudu-100mhz-ul-section-split.patch
 ```
-
-It sends an uplink section wider than 255 PRBs as two sections (255 PRBs, then the rest) with explicit `startPrbc`/`numPrbc`; downlink is unchanged. It also raises the OFH receive buffer pool from 4 MB to 64 MB, which 80–100 MHz needs. It applies to OCUDU `release_26_04`, `release_26_10` and `dev` (2026-10-27), builds with OCUDU's warnings-as-errors setting, and OCUDU's C-plane builder unit tests pass. Without a rebuild, 90 MHz (245 PRBs) avoids the issue: set `channel_bandwidth_MHz: 90` on the gNB and `bandwidth: 90` on the UE simulator, with `ssb_nr_arfcn` set to the `dl_ssb_arfcn` the gNB prints at start-up.
 
 ## Before you start
 

@@ -37,6 +37,20 @@ No input: it finds the VF(s) the host set up, sets MTU 9000, larger rings and no
 
 Undo: `--remove` (host: `--if <port> --remove`).
 
+## Fronthaul TX thread pinning (UE simulator)
+
+The UE simulator sends uplink fronthaul packets from one thread per fronthaul port (`lteue:s72-tx`). The configuration does not place that thread, so it can share a core with the DL/UL processing; the uplink then goes late and `t cpu` shows TX underflows (the "U" column). `simnovus-s72tx-pin.sh` installs a small service that pins each TX thread to a core you choose, at real-time priority, every time the UE simulator starts.
+
+Inside the UE simulator VM (or host):
+
+```
+curl -fsSL https://github.com/Simnovus-Corp/simnovus-fronthaul/releases/latest/download/simnovus-s72tx-pin.sh \
+  | sudo bash -s -- --install --cpus 11
+```
+
+- Pick one core per fronthaul port, inside the UE simulator's core list (lteue CPU cores) and outside its DL and UL cores. Example for 14 vCPUs: lteue 1-13, DL 4-8, UL 9-10, TX `--cpus 11`.
+- `--status` during a test shows each TX thread, its core and priority. `--remove` undoes it. `--once --cpus <c>` pins the running UE simulator once without installing anything.
+
 ## Example configs
 
 [`examples/oran72-1cell-100MHz`](examples/oran72-1cell-100MHz): a matching OCUDU gNB config and UE simulator config for one n78 100 MHz cell over O-RAN 7.2, with a table of the values that must match on both sides.
